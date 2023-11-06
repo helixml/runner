@@ -7,7 +7,7 @@ import (
 
 type Helix struct{}
 
-const HELIX_IMAGE = "quay.io/lukemarsden/helix-runner:v0.0.2"
+const HELIX_IMAGE = "quay.io/lukemarsden/helix-runner:v0.0.3"
 
 func (m *Helix) Service(ctx context.Context, outputPath *Directory) *Service {
 	return dag.Container().
