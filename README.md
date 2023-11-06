@@ -49,15 +49,7 @@ dagger call nvidia-smi
 ⧗ 47.50s ✔ 75
 ```
 
-## Start the helix runner
-
-The runner will automatically load and unload AI models based on demand to make optimal use of your GPU memory and minimize latency for requests.
-
-```
-dagger call start
-```
-
-## Create an image!
+## Create an image (SDXL)
 
 ```
 dagger call generate --type image --prompt "A pig in space"
@@ -67,7 +59,7 @@ The resulting image will be written to the current working directory.
 
 Note the first time will be slower, but the second time the long-running server will have the model cached intelligently in GPU memory, and the response will be much quicker.
 
-## Chat with daggerbot!
+## Chat with daggerbot (Mistral-7B)
 
 Coming soon.
 
@@ -85,8 +77,12 @@ dagger shell status
 
 ## Roadmap
 
-* Support for fine-tuning
-* Connect your runner to helix.ml and so you can manage and serve it through a web interface
+* Chat with daggerbot (Mistral-7B) with a CLI chatbot (demoing reusing GPU memory)
+* View GPU memory status of helix runner while it's running with a nice CLI tool
+* Demo of a DAG chaining models together e.g. use Mistral-7B to come up with a prompt for SDXL
+* Support for fine-tuning SDXL
+* Support for fine-tuning Mistral-7B
+* Connect your runner to helix.ml so you can manage and serve it through a web interface
 
 ## More info
 
