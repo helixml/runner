@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"fmt"
+	"encoding/json"
 	"log"
+	"net/http"
 	"time"
 
-	helix_types "github.com/helixml/helix/api/pkg/types"
+	"github.com/lukemarsden/helix/api/pkg/system"
+	"github.com/lukemarsden/helix/api/pkg/types"
 )
 
 type Helix struct{}
@@ -34,14 +37,12 @@ func (m *Helix) Service(ctx context.Context, outputPath *Directory) (*Service, e
 // model - you want to reuse the GPU memory so we run it as a service that
 // persists across the lifetime of many dagger calls within a dag
 
-func (m *Helix) Test(ctx context.Context, outputPath *Directory) (string, error) {
+func (m *Helix) Generate(ctx context.Context, outputPath *Directory, prompt string) (string, error) {
 	// create HTTP service container with exposed port 8080
 	httpSrv, err := m.Service(ctx, outputPath)
 	if err != nil {
 		return "", err
 	}
-
-	helix_types.Session{}
 
 	// get endpoint
 	val, err := httpSrv.Endpoint(ctx)
@@ -49,23 +50,53 @@ func (m *Helix) Test(ctx context.Context, outputPath *Directory) (string, error)
 		return "", err
 	}
 
-	fmt.Println(val)
-	log.Printf("one")
+	interaction := types.Interaction{
+		ID:       "cli-user",
+		Created:  time.Now(),
+		Creator:  "user",
+		Message:  prompt,
+		Finished: true,
+	}
+	interactionSystem := types.Interaction{
+		ID:       "cli-system",
+		Created:  time.Now(),
+		Creator:  "system",
+		Finished: false,
+	}
 
-	time.Sleep(10 * time.Second)
+	id := system.GenerateUUID()
+	session := types.Session{
+		ID:           "cli-" + id,
+		Name:         "cli",
+		Created:      time.Now(),
+		Updated:      time.Now(),
+		Mode:         "inference",
+		Type:         types.SessionType("image"),
+		ModelName:    types.Model_SDXL,
+		FinetuneFile: "",
+		Interactions: []types.Interaction{interaction, interactionSystem},
+		Owner:        "cli-user",
+		OwnerType:    "user",
+	}
 
-	val, err = dag.Container().
-		From("alpine").
-		WithServiceBinding("www", httpSrv).
-		WithExec([]string{"wget", "-O-", "http://www:8080"}).
-		Stdout(ctx)
-
-	log.Printf("two")
-	time.Sleep(10 * time.Second)
-
+	bs, err := json.Marshal(session)
 	if err != nil {
 		return "", err
 	}
+
+	req, err := http.NewRequest("POST", val+"/api/v1/worker/session", bytes.NewBuffer(bs))
+	if err != nil {
+		return "", err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	log.Printf("Response: %+v", resp)
 
 	return val, nil
 }

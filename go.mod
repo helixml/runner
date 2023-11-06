@@ -11,6 +11,7 @@ require (
 
 require (
 	github.com/adrg/xdg v0.4.0 // indirect
+	github.com/lukemarsden/helix v0.0.0-20231106160103-41687ed4e748 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 )
