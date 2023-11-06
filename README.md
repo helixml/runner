@@ -1,5 +1,10 @@
 # Easy Generative AI with Dagger and Helix
 
+Requires:
+
+* Linux
+* NVIDIA GPU
+
 ## Setup
 
 Install dagger CLI >= v0.9.3
