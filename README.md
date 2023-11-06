@@ -52,12 +52,10 @@ dagger call nvidia-smi
 ## Create an image (SDXL)
 
 ```
-dagger call generate --type image --prompt "A pig in space"
+dagger call generate --output-path . --prompt "A flying fish"
 ```
 
 The resulting image will be written to the current working directory.
-
-Note the first time will be slower, but the second time the long-running server will have the model cached intelligently in GPU memory, and the response will be much quicker.
 
 ## Chat with daggerbot (Mistral-7B)
 
