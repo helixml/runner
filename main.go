@@ -7,15 +7,6 @@ import (
 
 type Helix struct{}
 
-// example usage: "dagger call nvidia-smi"
-func (m *Helix) NvidiaSmi(ctx context.Context) (string, error) {
-	return dag.Container().
-		From("nvidia/cuda:12.2.2-base-ubuntu22.04").
-		ExperimentalWithAllGPUs().
-		WithExec([]string{"nvidia-smi"}).
-		Stdout(ctx)
-}
-
 const HELIX_IMAGE = "quay.io/lukemarsden/helix-runner:v0.0.2"
 
 func (m *Helix) Service(ctx context.Context, outputPath *Directory) *Service {
@@ -50,19 +41,11 @@ func (m *Helix) Generate(ctx context.Context, outputPath *Directory, prompt stri
 	return container, nil
 }
 
-///////////////
-
-// example usage: "dagger call container-echo --string-arg yo"
-func (m *Helix) ContainerEcho(stringArg string) *Container {
-	return dag.Container().From("alpine:latest").WithExec([]string{"echo", stringArg})
-}
-
-// example usage: "dagger call grep-dir --directory-arg . --pattern GrepDir"
-func (m *Helix) GrepDir(ctx context.Context, directoryArg *Directory, pattern string) (string, error) {
+// example usage: "dagger call nvidia-smi"
+func (m *Helix) NvidiaSmi(ctx context.Context) (string, error) {
 	return dag.Container().
-		From("alpine:latest").
-		WithMountedDirectory("/mnt", directoryArg).
-		WithWorkdir("/mnt").
-		WithExec([]string{"grep", "-R", pattern, "."}).
+		From("nvidia/cuda:12.2.2-base-ubuntu22.04").
+		ExperimentalWithAllGPUs().
+		WithExec([]string{"nvidia-smi"}).
 		Stdout(ctx)
 }
