@@ -80,8 +80,8 @@ dagger shell status
 * Chat with daggerbot (Mistral-7B) with a CLI chatbot (demoing reusing GPU memory)
 * View GPU memory status of helix runner while it's running with a nice CLI tool
 * Demo of a DAG chaining models together e.g. use Mistral-7B to come up with a prompt for SDXL
-* Support for fine-tuning SDXL
-* Support for fine-tuning Mistral-7B
+* CLI support for fine-tuning SDXL
+* CLI support for fine-tuning Mistral-7B
 * Connect your runner to helix.ml so you can manage and serve it through a web interface
 
 ## More info
