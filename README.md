@@ -21,7 +21,7 @@ export _EXPERIMENTAL_DAGGER_GPU_SUPPORT=1
 Test nvidia-smi:
 
 ```
-dagger call nvidia-smi
+dagger call -m github.com/helixml/runner nvidia-smi
 ```
 ```
 ✔ dagger call nvidia-smi [9.06s]
@@ -52,7 +52,7 @@ dagger call nvidia-smi
 ## Create an image (SDXL)
 
 ```
-dagger call generate --output-path . --prompt "A flying fish"
+dagger call -m github.com/helixml/runner generate --output-path . --prompt "A flying fish"
 ```
 
 The resulting image will be written to the current working directory.
@@ -62,7 +62,7 @@ The resulting image will be written to the current working directory.
 Coming soon.
 
 ```
-dagger shell chat
+dagger shell -m github.com/helixml/runner chat
 ```
 
 ## View status of helix runner
@@ -70,7 +70,7 @@ dagger shell chat
 Coming soon.
 
 ```
-dagger shell status
+dagger shell -m github.com/helixml/runner status
 ```
 
 ## Roadmap
