@@ -9,8 +9,8 @@ Requires:
 
 Install dagger CLI >= v0.9.3
 ```
-cd /usr/local
-curl -L https://dl.dagger.io/dagger/install.sh | sudo sh
+(cd /usr/local; 
+ curl -L https://dl.dagger.io/dagger/install.sh | sudo sh)
 ```
 
 Enable GPU support:
@@ -52,7 +52,7 @@ dagger call -m github.com/helixml/runner nvidia-smi
 ## Create an image (SDXL)
 
 ```
-dagger call -m github.com/helixml/runner generate --output-path . --prompt "A flying fish"
+dagger download generate-file --prompt fish
 ```
 
 The resulting image will be written to the current working directory.

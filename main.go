@@ -2,19 +2,21 @@ package main
 
 import (
 	"context"
+	"log"
 	"time"
 )
 
 type Helix struct{}
 
-const HELIX_IMAGE = "quay.io/lukemarsden/helix-runner:v0.0.4"
+const HELIX_IMAGE = "quay.io/lukemarsden/helix-runner:v0.0.8"
 
-func (m *Helix) Service(ctx context.Context, outputPath *Directory) *Service {
+// TODO: need to make client download file from runner via the API
+
+func (m *Helix) Service(ctx context.Context) *Service {
 	return dag.Container().
 		From(HELIX_IMAGE).
 		ExperimentalWithAllGPUs().
 		WithEntrypoint([]string{"/app/helix/helix", "runner", "--timeout-seconds", "600", "--memory", "24GB"}).
-		WithMountedDirectory("/app/sd-scripts/output_images", outputPath).
 		WithExposedPort(8080).
 		AsService()
 }
@@ -29,9 +31,9 @@ func (m *Helix) Client(ctx context.Context) *Container {
 // model - you want to reuse the GPU memory so we run it as a service that
 // persists across the lifetime of many dagger calls within a dag
 
-func (m *Helix) Generate(ctx context.Context, outputPath *Directory, prompt string) (*Container, error) {
+func (m *Helix) Generate(ctx context.Context, prompt string) (*Container, error) {
 	// create HTTP service container with exposed port 8080
-	helixRunner := m.Service(ctx, outputPath)
+	helixRunner := m.Service(ctx)
 
 	container := m.Client(ctx).
 		WithServiceBinding("helix-runner", helixRunner).
@@ -39,6 +41,24 @@ func (m *Helix) Generate(ctx context.Context, outputPath *Directory, prompt stri
 		WithExec([]string{"--api-host", "http://helix-runner:8080", "--type", "image", "--prompt", prompt})
 
 	return container, nil
+}
+
+func (m *Helix) GenerateFile(ctx context.Context, prompt string) (*File, error) {
+	container, err := m.Generate(ctx, prompt)
+	if err != nil {
+		return nil, err
+	}
+	stdout, err := container.Stdout(ctx)
+	if err != nil {
+		return nil, err
+	}
+	stderr, err := container.Stderr(ctx)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("Got stdout from generate: %s", stdout)
+	log.Printf("Got stderr from generate: %s", stderr)
+	return container.File("/app/helix/output.png"), nil
 }
 
 // example usage: "dagger call nvidia-smi"
