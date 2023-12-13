@@ -8,7 +8,7 @@ import (
 
 type Helix struct{}
 
-const HELIX_IMAGE = "quay.io/lukemarsden/helix-runner:v0.0.8"
+const HELIX_IMAGE = "europe-docker.pkg.dev/helixml/helix/runner:v0.0.10"
 
 // TODO: need to make client download file from runner via the API
 
